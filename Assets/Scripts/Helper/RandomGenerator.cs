@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+// use for random generator
+using Random = UnityEngine.Random;
+
+namespace Matrix
+{
+    public class RandomGenerator : MonoSingleton<RandomGenerator>
+    {
+        public int Seed;
+        public bool UseRandomSeed = true;
+
+        void Start()
+        {
+            if (UseRandomSeed)
+            {
+                Seed = GenerateRandomSeed();
+            }
+
+            Random.InitState(Seed);
+        }
+
+        public int GenerateRandomSeed()
+        {
+            DateTime currentTime = DateTime.Now;
+            return currentTime.Ticks.ToString().GetHashCode();
+        }
+
+        public int NextInt()
+        {
+            return NextInt(int.MinValue, int.MaxValue);
+        }
+
+        public int NextInt(int maxValue)
+        {
+            return NextInt(0, maxValue);
+        }
+
+        public int NextInt(int minValue, int maxValue)
+        {
+            return Random.Range(minValue, maxValue);
+        }
+
+        /// <summary>
+        /// return a valuye between 0 (inclusive) and 1 (exclusive)
+        /// </summary>
+        /// <returns></returns>
+        public float NextFloat()
+        {
+            return Random.value;
+        }
+
+        public float NextFloat(float maxValue)
+        {
+            return NextFloat(0, maxValue);
+        }
+
+        public float NextFloat(float minValue, float maxValue)
+        {
+            return Random.Range(minValue, maxValue);
+        }
+
+        public float NextBinomialFloat(float max)
+        {
+            return NextFloat(max) - NextFloat(max);
+        }
+    }
+}
