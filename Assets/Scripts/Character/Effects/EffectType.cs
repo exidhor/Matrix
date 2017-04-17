@@ -8,6 +8,7 @@ namespace Matrix
     public enum EffectType
     {
         ShotImpact,
-        Sleeve
+        Sleeve, 
+        Shield
     }
 }

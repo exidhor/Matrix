@@ -17,7 +17,7 @@ namespace Matrix
             }
 
             // verify that the player is on a node
-            Node currentPlayerPosition = Map.Instance.GetNodeAt(character.GetPosition());
+            Node currentPlayerPosition = Level.Instance.GetNodeAt(character.GetPosition());
 
             int currentIndex = -1;
 
@@ -34,7 +34,7 @@ namespace Matrix
             {
                 if (specs.LastNodeIndex != -1)
                 {
-                    Seek(ref output, character, specs, Map.Instance.GetPositionAt(specs.PathToFollow[specs.LastNodeIndex].Coord));
+                    Seek(ref output, character, specs, Level.Instance.GetPositionAt(specs.PathToFollow[specs.LastNodeIndex].Coord));
                 }
                 return;
             }
@@ -45,12 +45,12 @@ namespace Matrix
             // delegate seek on it
             if (currentIndex == 0)
             {
-                Arrive(ref output, character, specs, Map.Instance.GetPositionAt(specs.PathToFollow[currentIndex].Coord));
+                Arrive(ref output, character, specs, Level.Instance.GetPositionAt(specs.PathToFollow[currentIndex].Coord));
             }
             else
             {
                 currentIndex--;
-                Seek(ref output, character, specs, Map.Instance.GetPositionAt(specs.PathToFollow[currentIndex].Coord));
+                Seek(ref output, character, specs, Level.Instance.GetPositionAt(specs.PathToFollow[currentIndex].Coord));
             }
 
             specs.LastNodeIndex = currentIndex;

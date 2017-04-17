@@ -8,6 +8,11 @@ namespace Matrix
 {
     public class ObstacleCase
     {
+        public Obstacle Obstacle
+        {
+            get { return _obstacle; }
+        }
+
         private Obstacle _obstacle;
 
         public bool IsFilled
@@ -25,6 +30,11 @@ namespace Matrix
 
         public void Set(Obstacle obstacle)
         {
+            if (_obstacle != null)
+            {
+                _obstacle.Release();
+            }
+
             _obstacle = obstacle;
         }
 

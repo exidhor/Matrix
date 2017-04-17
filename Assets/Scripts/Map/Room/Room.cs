@@ -10,9 +10,17 @@ namespace Matrix
     {
         public RoomGrid Grid;
 
+        public RoomConnectionList RoomConnectionList
+        {
+            get { return _roomConnectionList; }
+        }
+
+        private RoomConnectionList _roomConnectionList;
+
         public GameObject GroundContainter;
         public GameObject ObstacleContainer;
         public GameObject WallContainer;
+        public GameObject DoorContainer;
 
         public int Length
         {
@@ -24,8 +32,22 @@ namespace Matrix
             get { return Grid.Width; }
         }
 
-        public void CreateRoom(Vector2 position, int length, int width)
+        public int RoomIndex
         {
+            get { return _roomIndex; }
+        }
+
+        private int _roomIndex;
+
+        void Awake()
+        {
+            _roomConnectionList = new RoomConnectionList(this);
+        }
+
+        public void CreateRoom(Vector2 position, int length, int width, int roomIndex)
+        {
+            _roomIndex = roomIndex;
+
             transform.position = position;
             Grid = new RoomGrid(length, width, position);
         }
@@ -64,6 +86,13 @@ namespace Matrix
             wall.transform.parent = WallContainer.transform;
 
             Grid.SetObstacle(x, y, wall);
+        }
+
+        public void SetDoor(int x, int y, Door door)
+        {
+            door.transform.parent = DoorContainer.transform;
+
+            Grid.SetObstacle(x, y, door);
         }
     }
 }

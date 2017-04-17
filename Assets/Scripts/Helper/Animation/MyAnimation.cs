@@ -17,20 +17,31 @@ namespace Matrix
 
         public List<Sprite> Sprites;
 
+        public bool IsFinished
+        {
+            get { return _isFinished; }
+        }
+
         private float _currentTime;
         private int _currentIndex;
+        private bool _isFinished;
 
         public void Reset()
         {
             _currentIndex = 0;
             _currentTime = 0;
+            _isFinished = true;
         }
 
         public void Actualize(float deltaTime, SpriteRenderer spriteRenderer, Transform objectTransform)
         {
+            _isFinished = true; // in case we dodge the update
+            
             // we dodge the time update if there is no speed
             if (Speed > float.Epsilon)
             {
+                _isFinished = false; // we didnt dodge the update
+
                 _currentTime += deltaTime;
 
                 while (_currentTime > Speed)
@@ -47,6 +58,7 @@ namespace Matrix
                         else
                         {
                             _currentIndex = Sprites.Count - 1;
+                            _isFinished = true; // the animation is at the end
                         }
                     }
                 }

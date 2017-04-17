@@ -8,19 +8,18 @@ namespace Matrix
 {
     public class GunComponent : MonoBehaviour
     {
-        public Transform GunPosition;
-        public Transform SleeveOutput;
         public ProjectileType ProjectileType;
-        public EffectType Sleeve;
-
+        public Transform GunPosition;
         public float ProjectileSpeed;
         public float MaxAngleShot;
 
+        public float ReloadingTime;
+
+        public EffectType Sleeve;
+        public Transform SleeveOutput;
         public Vector2 IntervalSleeveSpeed;
         public float MaxSleeveAngle;
         public float MaxSleeveRotation;
-
-        public float ReloadingTime;
 
         public bool IsReady
         {
@@ -29,11 +28,6 @@ namespace Matrix
 
         private bool _isReady;
         private float _currentReloadingTime = 0;
-
-        void Awake()
-        {
-
-        }
 
         void Start()
         {
@@ -72,6 +66,8 @@ namespace Matrix
 
                 Projectile projectile = ProjectileManager.Instance.GetFreeProjectile(ProjectileType);
 
+                Physics2D.IgnoreCollision(projectile.GetComponent<Collider2D>(), GetComponent<Collider2D>());
+
                 projectile.transform.position = GunPosition.position;
                 projectile.transform.rotation = transform.rotation;
 
@@ -79,7 +75,7 @@ namespace Matrix
 
                 projectile.Rigidbody.velocity = MathHelper.GetDirectionFromAngle(angle * Mathf.Deg2Rad)*ProjectileSpeed;
 
-                ProjectSleeve(projectile.Rigidbody.velocity);
+                ProjectSleeve(projectile.Rigidbody.velocity, projectile.Rigidbody.rotation);
 
                 _isReady = false;
 
@@ -89,7 +85,7 @@ namespace Matrix
             return false;
         }
 
-        public void ProjectSleeve(Vector2 velocity)
+        public void ProjectSleeve(Vector2 velocity, float rotation)
         {
             Sleeve sleeve = (Sleeve) EffectManager.Instance.GetFreeEffect(EffectType.Sleeve);
 
@@ -103,6 +99,8 @@ namespace Matrix
             velocity *= speed;
 
             float angle = RandomGenerator.Instance.NextFloat(90 - MaxSleeveAngle, 90 + MaxSleeveAngle);
+
+            sleeve.Rigidbody.rotation = rotation;
 
             velocity = MathHelper.RotateVector(velocity, angle*Mathf.Deg2Rad);
 

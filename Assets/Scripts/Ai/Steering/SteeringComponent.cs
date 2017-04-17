@@ -105,7 +105,7 @@ namespace Matrix
                     break;
 
                 case EBehavior.Face:
-                    Behavior.Face(ref toFill, character, SteeringSpecs, target.GetPosition());
+                    Behavior.Face(ref toFill, character, target.GetPosition());
                     break;
 
                 case EBehavior.Pursue:

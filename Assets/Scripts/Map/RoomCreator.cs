@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Matrix
 {
-    public class Map : MonoSingleton<Map>
+    public class RoomCreator : MonoSingleton<RoomCreator>
     {
         public List<WeightedModel> GroundModels;
 
@@ -16,28 +16,25 @@ namespace Matrix
 
         public List<WeightedModel> WallIntersectionModels;
 
-        public int RoomWidth;
-        public int RoomLength;
+        public List<WeightedModel> DoorModels;
 
-        public List<Room> RoomList;
-        public int CurrentRoomIndex;
+        //public int RoomWidth;
+        //public int RoomLength;
+
+        //public List<Room> RoomList;
+        //public int CurrentRoomIndex;
 
         public float ObstacleRate;
-
-        public PoolEntry poolEntryForRoom;
-        private Pool _poolRoom;
 
         void Awake()
         {
             CreatePools();
 
-            RoomList = new List<Room>();
+            //RoomList = new List<Room>();
         }
 
         private void CreatePools()
         {
-            _poolRoom = PoolTable.Instance.AddPool(poolEntryForRoom);
-
             for (int i = 0; i < GroundModels.Count; i++)
             {
                 PoolTable.Instance.AddPool(GroundModels[i].Model);
@@ -57,6 +54,11 @@ namespace Matrix
             {
                 PoolTable.Instance.AddPool(WallIntersectionModels[i].Model);
             }
+
+            for (int i = 0; i < DoorModels.Count; i++)
+            {
+                PoolTable.Instance.AddPool(DoorModels[i].Model);
+            }
         }
 
         //void Start()
@@ -67,65 +69,80 @@ namespace Matrix
         //    RoomList[0].Activate();
         //}
 
-        public void Construct()
+        //public void Construct()
+        //{
+        //    if (RoomList.Count > 0)
+        //    {
+        //        for (int i = 0; i < RoomList.Count; i++)
+        //        {
+        //            RoomList[i].DestroyRoom();
+        //            _poolRoom.ReleaseResource(RoomList[i]);
+        //        }
+
+        //        RoomList.Clear();
+        //    }
+
+        //    RoomList.Add(CreateRoom(0));
+        //    CurrentRoomIndex = 0;
+
+        //    RoomList[0].Activate();
+        //}
+
+        //public NodeGrid GetCurrentNodeGrid()
+        //{
+        //    return RoomList[CurrentRoomIndex].Grid.GetNodeGrid();
+        //}
+
+        //public Node GetNodeAt(Vector2 position)
+        //{
+        //    return RoomList[CurrentRoomIndex].Grid.GetNodeAt(position);
+        //}
+
+        //public Vector2 GetPositionAt(Coord coord)
+        //{
+        //    return RoomList[CurrentRoomIndex].Grid.GetPositionAt(coord);
+        //}
+
+        //private Room GetNewRoom()
+        //{
+        //    return _poolRoom.GetFreeResource().GetComponent<Room>();
+        //}
+
+        //private Room CreateRoom(int index)
+        //{
+        //    Room newRoom = GetNewRoom();
+        //    newRoom.name = "Room " + index;
+
+        //    newRoom.transform.parent = this.transform;
+
+        //    newRoom.CreateRoom(new Vector2(0, 0), RoomLength, RoomWidth);
+
+        //    CreateGrounds(newRoom);
+        //    CreateWalls(newRoom);
+        //    CreateObstacles(newRoom);
+
+        //    newRoom.Grid.Organize(1f, 1f);
+
+        //    newRoom.Grid.ComputeNodeConnections();
+
+        //    newRoom.Disable();
+
+        //    return newRoom;
+        //}
+
+        public void CreateRoom(Room room)
         {
-            if (RoomList.Count > 0)
-            {
-                for (int i = 0; i < RoomList.Count; i++)
-                {
-                    RoomList[i].DestroyRoom();
-                    _poolRoom.ReleaseResource(RoomList[i]);
-                }
+            CreateGrounds(room);
+            CreateWalls(room);
+            CreateDoors(room);
 
-                RoomList.Clear();
-            }
+            CreateObstacles(room);
 
-            RoomList.Add(CreateRoom(0));
-            CurrentRoomIndex = 0;
+            room.Grid.Organize(1f, 1f);
 
-            RoomList[0].Activate();
-        }
+            room.Grid.ComputeNodeConnections();
 
-        public NodeGrid GetCurrentNodeGrid()
-        {
-            return RoomList[CurrentRoomIndex].Grid.GetNodeGrid();
-        }
-
-        public Node GetNodeAt(Vector2 position)
-        {
-            return RoomList[CurrentRoomIndex].Grid.GetNodeAt(position);
-        }
-
-        public Vector2 GetPositionAt(Coord coord)
-        {
-            return RoomList[CurrentRoomIndex].Grid.GetPositionAt(coord);
-        }
-
-        private Room GetNewRoom()
-        {
-            return _poolRoom.GetFreeResource().GetComponent<Room>();
-        }
-
-        private Room CreateRoom(int index)
-        {
-            Room newRoom = GetNewRoom();
-            newRoom.name = "Room " + index;
-
-            newRoom.transform.parent = this.transform;
-
-            newRoom.CreateRoom(new Vector2(0, 0), RoomLength, RoomWidth);
-
-            CreateGrounds(newRoom);
-            CreateWalls(newRoom);
-            CreateObstacles(newRoom);
-
-            newRoom.Grid.Organize(1f, 1f);
-
-            newRoom.Grid.ComputeNodeConnections();
-
-            newRoom.Disable();
-
-            return newRoom;
+            room.Disable();
         }
 
         private void CreateGrounds(Room room)
@@ -156,7 +173,7 @@ namespace Matrix
             for (int i = 1; i < room.Length - 1; i++)
             {
                 Wall wall = PickFrom<Wall>(i, room.Width - 1, WallModels);
-                wall.transform.parent = room.transform;
+                wall.transform.eulerAngles = new Vector3(0, 0, 0);
 
                 room.SetWall(i, room.Width - 1, wall);
             }
@@ -174,6 +191,7 @@ namespace Matrix
             for (int i = 1; i < room.Length - 1; i++)
             {
                 Wall wall = PickFrom<Wall>(i, 0, WallModels);
+                wall.transform.eulerAngles = new Vector3(0, 0, 0);
 
                 room.SetWall(i, 0, wall);
             }
@@ -189,6 +207,7 @@ namespace Matrix
             // top - right intersection
             {
                 Wall topRightIntersection = PickFrom<Wall>(room.Length-1, room.Width - 1, WallIntersectionModels);
+                topRightIntersection.transform.eulerAngles = new Vector3(0, 0, 0);
 
                 room.SetWall(room.Length - 1, room.Width - 1, topRightIntersection);
             }
@@ -225,6 +244,56 @@ namespace Matrix
                         room.SetObstacle(i, j, obstacle);
                     }
                 }
+            }
+        }
+
+        private void CreateDoors(Room room)
+        {
+            int lengthMiddle = room.Length / 2;
+            int widthMiddle = room.Width / 2;
+
+            // left
+            RoomConnection leftConnection = room.RoomConnectionList.GetConnection(Direction.Left);
+            if (leftConnection != null)
+            {
+                // Get the middle of the wall
+                Door door = PickFrom<Door>(0, widthMiddle, DoorModels);
+                door.SetConnectedRoomIndex(leftConnection.GetOtherRoom(room).RoomIndex);
+
+                room.SetDoor(0, widthMiddle, door);
+            }
+
+            // top
+            RoomConnection topConnection = room.RoomConnectionList.GetConnection(Direction.Top);
+            if (topConnection != null)
+            {
+                // Get the middle of the wall
+                Door door = PickFrom<Door>(lengthMiddle, room.Width - 1, DoorModels);
+                door.SetConnectedRoomIndex(topConnection.GetOtherRoom(room).RoomIndex);
+
+                room.SetDoor(lengthMiddle, room.Width-1, door);
+            }
+
+            // right
+            RoomConnection rightConnection = room.RoomConnectionList.GetConnection(Direction.Right);
+            if (rightConnection != null)
+            {
+                // Get the middle of the wall
+                Door door = PickFrom<Door>(room.Length-1, widthMiddle, DoorModels);
+                door.SetConnectedRoomIndex(rightConnection.GetOtherRoom(room).RoomIndex);
+
+                room.SetDoor(room.Length-1, widthMiddle, door);
+            }
+
+            // bottom
+            RoomConnection bottomConnection = room.RoomConnectionList.GetConnection(Direction.Bottom);
+            if (bottomConnection != null)
+            {
+                // Get the middle of the wall
+                Door door = PickFrom<Door>(lengthMiddle, 0, DoorModels);
+                door.SetConnectedRoomIndex(bottomConnection.GetOtherRoom(room).RoomIndex);
+
+                room.SetDoor(lengthMiddle, 0, door);
             }
         }
 

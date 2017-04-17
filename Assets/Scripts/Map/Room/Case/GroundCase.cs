@@ -8,6 +8,11 @@ namespace Matrix
 {
     public class GroundCase
     {
+        public Ground Ground
+        {
+            get { return _ground; }
+        }
+
         private Ground _ground;
 
         public void Destroy()
@@ -20,6 +25,11 @@ namespace Matrix
 
         public void Set(Ground ground)
         {
+            if (_ground != null)
+            {
+                _ground.Release();
+            }
+
             _ground = ground;
         }
 

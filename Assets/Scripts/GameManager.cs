@@ -7,6 +7,8 @@ namespace Matrix
 {
     public class GameManager : MonoSingleton<GameManager>
     {
+        public LevelEntry Entry;
+
         void Awake()
         {
             
@@ -19,7 +21,9 @@ namespace Matrix
 
         public void StartGame()
         {
-            Map.Instance.Construct();
+            LevelCreator.Instance.CreateLevel(Entry);
+            Level.Instance.Construct(Entry);
+            Level.Instance.ShowStartingRoom();
         }
     }
 }

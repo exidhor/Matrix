@@ -38,18 +38,18 @@ namespace Matrix
 
             if (!TargetReached)
             {
-                Node direction = Map.Instance.GetNodeAt(Target.GetPosition());
+                Node direction = Level.Instance.GetNodeAt(Target.GetPosition());
 
                 if (direction != null && !direction.IsBlocking)
                 {
-                    List<Node> nodePath = PathFinding.Classical_A_Star(Map.Instance.GetCurrentNodeGrid(),
-                        Map.Instance.GetNodeAt(_characterTransform.position), direction, HeuristicType.OctileDistance);
+                    List<Node> nodePath = PathFinding.Classical_A_Star(Level.Instance.GetCurrentNodeGrid(),
+                        Level.Instance.GetNodeAt(_characterTransform.position), direction, HeuristicType.OctileDistance);
 
                     DebugPath.Clear();
 
                     for (int i = 0; i < nodePath.Count; i++)
                     {
-                        DebugPath.Add(Map.Instance.GetPositionAt(nodePath[i].Coord));
+                        DebugPath.Add(Level.Instance.GetPositionAt(nodePath[i].Coord));
                     }
 
                     _steeringComponent.SteeringSpecs.PathToFollow = nodePath;

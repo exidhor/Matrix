@@ -8,6 +8,16 @@ namespace Matrix
 {
     public class RoomCase
     {
+        public Ground Ground
+        {
+            get { return _ground.Ground; }
+        }
+
+        public Obstacle Obstacle
+        {
+            get { return _obstacle.Obstacle; }
+        }
+
         private GroundCase _ground;
         private ObstacleCase _obstacle;
 

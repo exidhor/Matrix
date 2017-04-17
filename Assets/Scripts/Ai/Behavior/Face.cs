@@ -8,7 +8,7 @@ namespace Matrix
 {
     public static partial class Behavior
     {
-        public static void Face(ref SteeringOutput output, Kinematic character, SteeringSpecs specs, Vector2 target)
+        public static void Face(ref SteeringOutput output, Kinematic character, Vector2 target)
         {
             output.IsInstantOrientation = true;
             output.IsOriented = false;

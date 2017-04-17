@@ -39,6 +39,10 @@ namespace Matrix
             return NextInt(0, maxValue);
         }
 
+        /// <summary>
+        /// return a valuye between minValue (inclusive) and maxValue (exclusive)
+        /// </summary>
+        /// <returns></returns>
         public int NextInt(int minValue, int maxValue)
         {
             return Random.Range(minValue, maxValue);
