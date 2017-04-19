@@ -8,8 +8,8 @@ namespace Matrix
     public enum Direction
     {
         Left,
-        Top,
+        Up,
         Right,
-        Bottom  
+        Down  
     }
 }

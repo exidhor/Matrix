@@ -10,7 +10,7 @@ namespace Matrix
     {
         public List<WeightedModel> GroundModels;
 
-        public List<WeightedModel> ObstacleModels;
+        //public List<WeightedModel> ObstacleModels;
 
         public List<WeightedModel> WallModels;
 
@@ -18,19 +18,11 @@ namespace Matrix
 
         public List<WeightedModel> DoorModels;
 
-        //public int RoomWidth;
-        //public int RoomLength;
-
-        //public List<Room> RoomList;
-        //public int CurrentRoomIndex;
-
-        public float ObstacleRate;
+        //public float ObstacleRate;
 
         void Awake()
         {
             CreatePools();
-
-            //RoomList = new List<Room>();
         }
 
         private void CreatePools()
@@ -40,10 +32,10 @@ namespace Matrix
                 PoolTable.Instance.AddPool(GroundModels[i].Model);
             }
 
-            for (int i = 0; i < ObstacleModels.Count; i++)
-            {
-                PoolTable.Instance.AddPool(ObstacleModels[i].Model);
-            }
+            //for (int i = 0; i < ObstacleModels.Count; i++)
+            //{
+            //    PoolTable.Instance.AddPool(ObstacleModels[i].Model);
+            //}
 
             for (int i = 0; i < WallModels.Count; i++)
             {
@@ -130,13 +122,14 @@ namespace Matrix
         //    return newRoom;
         //}
 
-        public void CreateRoom(Room room)
+        public void CreateRoom(Room room, RoomPattern pattern)
         {
             CreateGrounds(room);
             CreateWalls(room);
             CreateDoors(room);
 
-            CreateObstacles(room);
+            pattern.Fill(room);
+            //CreateObstacles(room);
 
             room.Grid.Organize(1f, 1f);
 
@@ -182,7 +175,7 @@ namespace Matrix
             for (int i = 1; i < room.Width - 1; i++)
             {
                 Wall wall = PickFrom<Wall>(room.Length - 1, i, WallModels);
-                wall.transform.eulerAngles = new Vector3(0, 0, 90);
+                wall.transform.eulerAngles = new Vector3(0, 0, -90);
 
                 room.SetWall(room.Length - 1, i, wall);
             }
@@ -191,7 +184,7 @@ namespace Matrix
             for (int i = 1; i < room.Length - 1; i++)
             {
                 Wall wall = PickFrom<Wall>(i, 0, WallModels);
-                wall.transform.eulerAngles = new Vector3(0, 0, 0);
+                wall.transform.eulerAngles = new Vector3(0, 0, -180);
 
                 room.SetWall(i, 0, wall);
             }
@@ -229,23 +222,23 @@ namespace Matrix
             }
         }
 
-        private void CreateObstacles(Room room)
-        {
-            for (int i = 1; i < room.Length - 1; i++)
-            {
-                for (int j = 1; j < room.Width - 1; j++)
-                {
-                    float rate = RandomGenerator.Instance.NextFloat();
+        //private void CreateObstacles(Room room)
+        //{
+        //    for (int i = 1; i < room.Length - 1; i++)
+        //    {
+        //        for (int j = 1; j < room.Width - 1; j++)
+        //        {
+        //            float rate = RandomGenerator.Instance.NextFloat();
 
-                    if (rate < ObstacleRate)
-                    {
-                        Obstacle obstacle = PickObstacleModel(i, j);
+        //            if (rate < ObstacleRate)
+        //            {
+        //                Obstacle obstacle = PickObstacleModel(i, j);
 
-                        room.SetObstacle(i, j, obstacle);
-                    }
-                }
-            }
-        }
+        //                room.SetObstacle(i, j, obstacle);
+        //            }
+        //        }
+        //    }
+        //}
 
         private void CreateDoors(Room room)
         {
@@ -259,39 +252,51 @@ namespace Matrix
                 // Get the middle of the wall
                 Door door = PickFrom<Door>(0, widthMiddle, DoorModels);
                 door.SetConnectedRoomIndex(leftConnection.GetOtherRoom(room).RoomIndex);
+                door.transform.eulerAngles = new Vector3(0, 0, 90);
+                door.SetOpeningDoorDirection(Direction.Down);
+                door.SetDirectionRelativeToRoom(Direction.Left);
 
                 room.SetDoor(0, widthMiddle, door);
             }
 
             // top
-            RoomConnection topConnection = room.RoomConnectionList.GetConnection(Direction.Top);
+            RoomConnection topConnection = room.RoomConnectionList.GetConnection(Direction.Up);
             if (topConnection != null)
             {
                 // Get the middle of the wall
                 Door door = PickFrom<Door>(lengthMiddle, room.Width - 1, DoorModels);
                 door.SetConnectedRoomIndex(topConnection.GetOtherRoom(room).RoomIndex);
+                door.transform.eulerAngles = new Vector3(0, 0, 0);
+                door.SetOpeningDoorDirection(Direction.Left);
+                door.SetDirectionRelativeToRoom(Direction.Up);
 
                 room.SetDoor(lengthMiddle, room.Width-1, door);
             }
 
-            // right
+             // right
             RoomConnection rightConnection = room.RoomConnectionList.GetConnection(Direction.Right);
             if (rightConnection != null)
             {
                 // Get the middle of the wall
                 Door door = PickFrom<Door>(room.Length-1, widthMiddle, DoorModels);
                 door.SetConnectedRoomIndex(rightConnection.GetOtherRoom(room).RoomIndex);
+                door.transform.eulerAngles = new Vector3(0, 0, -90);
+                door.SetOpeningDoorDirection(Direction.Up);
+                door.SetDirectionRelativeToRoom(Direction.Right);
 
                 room.SetDoor(room.Length-1, widthMiddle, door);
             }
 
             // bottom
-            RoomConnection bottomConnection = room.RoomConnectionList.GetConnection(Direction.Bottom);
+            RoomConnection bottomConnection = room.RoomConnectionList.GetConnection(Direction.Down);
             if (bottomConnection != null)
             {
                 // Get the middle of the wall
                 Door door = PickFrom<Door>(lengthMiddle, 0, DoorModels);
                 door.SetConnectedRoomIndex(bottomConnection.GetOtherRoom(room).RoomIndex);
+                door.transform.eulerAngles = new Vector3(0, 0, -180);
+                door.SetOpeningDoorDirection(Direction.Right);
+                door.SetDirectionRelativeToRoom(Direction.Down);
 
                 room.SetDoor(lengthMiddle, 0, door);
             }
@@ -324,10 +329,10 @@ namespace Matrix
             return newObject;
         }
 
-        private Obstacle PickObstacleModel(int x, int y)
-        {
-            return PickFrom<Obstacle>(x, y, ObstacleModels);
-        }
+        //private Obstacle PickObstacleModel(int x, int y)
+        //{
+        //    return PickFrom<Obstacle>(x, y, ObstacleModels);
+        //}
 
         private Ground PickGroundModel(int x, int y)
         {

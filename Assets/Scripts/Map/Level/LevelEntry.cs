@@ -20,5 +20,7 @@ namespace Matrix
         public float DistanceBetweenRooms;
 
         public List<float> ConnectionRates;
+
+        public List<WeightedRoomPattern> WeightedRoomPatterns;
     }
 }

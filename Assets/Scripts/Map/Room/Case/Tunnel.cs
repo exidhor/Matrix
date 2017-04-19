@@ -7,9 +7,10 @@ using UnityEngine;
 namespace Matrix
 {
     [RequireComponent(typeof(Collider2D))]
-    public class Tunnel : PoolObject
+    public class Tunnel : MonoBehaviour
     {
         public bool IsActivate;
+        public Direction Direction;
 
         private int _connectedRoomIndex;
 

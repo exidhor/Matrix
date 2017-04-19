@@ -15,9 +15,9 @@ namespace Matrix
             _table = new Dictionary<int, Pool>();
         }
 
-        public Pool AddPool(PoolObject model, uint poolSize, bool isStatic, uint expandSize = 1)
+        public Pool AddPool(PoolObject model, uint poolSize, uint expandSize = 1)
         {
-            Pool newPool = InstanciatePool(model, isStatic, expandSize);
+            Pool newPool = InstanciatePool(model, expandSize);
             newPool.SetSize(poolSize);
 
             _table.Add(model.GetInstanceID(), newPool);
@@ -39,7 +39,6 @@ namespace Matrix
         {
             return AddPool(poolEntry.Prefab,
                 poolEntry.PoolSize,
-                poolEntry.IsStatic,
                 poolEntry.ExpandPoolSize);
         }
 
@@ -48,7 +47,7 @@ namespace Matrix
             return _table[instanceID];
         }
 
-        private Pool InstanciatePool(PoolObject model, bool isStatic, uint expandSize)
+        private Pool InstanciatePool(PoolObject model, uint expandSize)
         {
             GameObject poolGameObject = new GameObject();
             poolGameObject.transform.parent = gameObject.transform;
@@ -56,7 +55,7 @@ namespace Matrix
 
             pool.transform.parent = gameObject.transform;
 
-            pool.Construct(model, isStatic, expandSize);
+            pool.Construct(model, expandSize);
 
             return pool;
         }

@@ -21,6 +21,7 @@ namespace Matrix
         public GameObject ObstacleContainer;
         public GameObject WallContainer;
         public GameObject DoorContainer;
+        public GameObject DynamicControllerContainer;
 
         public int Length
         {
@@ -39,9 +40,23 @@ namespace Matrix
 
         private int _roomIndex;
 
+        private List<Door> _doors;
+
+        private List<DynamicController> _dynamicObjectControllers;
+
         void Awake()
         {
             _roomConnectionList = new RoomConnectionList(this);
+            _doors = new List<Door>();
+
+            _dynamicObjectControllers = new List<DynamicController>();
+        }
+
+        public override void OnPoolEnter()
+        {
+            base.OnPoolEnter();
+
+            DestroyRoom();
         }
 
         public void CreateRoom(Vector2 position, int length, int width, int roomIndex)
@@ -52,19 +67,46 @@ namespace Matrix
             Grid = new RoomGrid(length, width, position);
         }
 
+        public void OpenDoors()
+        {
+            for (int i = 0; i < _doors.Count; i++)
+            {
+                _doors[i].Open();
+            }
+        }
+
         public void DestroyRoom()
         {
             Grid.DestroyObjects();
+
+            _doors.Clear();
+
+            for (int i = 0; i < _dynamicObjectControllers.Count; i++)
+            {
+                _dynamicObjectControllers[i].Release();
+            }
+
+            _dynamicObjectControllers.Clear();
         }
 
         public void Activate()
         {
             Grid.SetActive(true);
+
+            for (int i = 0; i < _dynamicObjectControllers.Count; i++)
+            {
+                _dynamicObjectControllers[i].Activate();
+            }
         }
 
         public void Disable()
         {
             Grid.SetActive(false);
+
+            for (int i = 0; i < _dynamicObjectControllers.Count; i++)
+            {
+                _dynamicObjectControllers[i].Disable();
+            }
         }
 
         public void SetGround(int x, int y, Ground ground)
@@ -92,7 +134,21 @@ namespace Matrix
         {
             door.transform.parent = DoorContainer.transform;
 
+            _doors.Add(door);
+
             Grid.SetObstacle(x, y, door);
+        }
+
+        public void AddDynamicController(DynamicController controller)
+        {
+            controller.transform.parent = DynamicControllerContainer.transform;
+
+            _dynamicObjectControllers.Add(controller);
+        }
+
+        public List<Door> GetDoors()
+        {
+            return _doors;
         }
     }
 }

@@ -15,7 +15,6 @@ namespace Matrix
     {
         public PoolObject Prefab = null;
         public uint PoolSize = 100;
-        public bool IsStatic = false;
         public uint ExpandPoolSize = 10;
     }
 }

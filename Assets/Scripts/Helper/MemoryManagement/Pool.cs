@@ -21,8 +21,6 @@ namespace Matrix
 
         private PoolObject _model;
 
-        private bool _isStatic;
-
         /// by how many the pool is increase if there is not enough place 
         private int _expandSize;
 
@@ -33,12 +31,10 @@ namespace Matrix
         /// Construct the pool and initialize it
         /// </summary>
         /// <param name="model">The model for all the instances</param>
-        /// <param name="isStatic"></param>
         /// <param name="expandSize">by how many the pool is increase if there is not enough place </param>
-        public void Construct(PoolObject model, bool isStatic, uint expandSize)
+        public void Construct(PoolObject model, uint expandSize)
         {
             _model = model;
-            _isStatic = isStatic;
             _expandSize = (int)expandSize;
 
             name = "Pool (" + _model.name + ")";
@@ -126,6 +122,8 @@ namespace Matrix
             {
                 Resources[index].IsUsed = true;
                 Resources[index].PoolObject.gameObject.SetActive(true);
+                
+                Resources[index].PoolObject.OnPoolExit();
 
                 _firstFreeResource = index + 1;
 
@@ -140,6 +138,8 @@ namespace Matrix
                 Resources[index].PoolObject.gameObject.SetActive(false);
                 Resources[index].PoolObject.transform.position = StoredPosition;
                 Resources[index].PoolObject.transform.parent = transform;
+
+                Resources[index].PoolObject.OnPoolEnter();
 
                 if (_firstFreeResource > index)
                 {

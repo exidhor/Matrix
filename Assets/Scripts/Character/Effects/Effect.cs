@@ -19,8 +19,10 @@ namespace Matrix
 
         protected float _currentLifeTime;
 
-        void OnEnable()
+        public override void OnPoolExit()
         {
+            base.OnPoolExit();
+
             _currentLifeTime = 0;
             _isDead = false;
         }

@@ -71,5 +71,12 @@ namespace Matrix
         {
             return NextFloat(max) - NextFloat(max);
         }
+
+        public bool NextBool()
+        {
+            int randomValue = NextInt(2);
+            
+            return randomValue == 0;
+        }
     }
 }

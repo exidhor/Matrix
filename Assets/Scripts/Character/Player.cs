@@ -64,6 +64,11 @@ namespace Matrix
                 HandleMovement();
             }
 
+            if (Input.GetButtonDown("OpenDoor"))
+            {
+                Level.Instance.OpenDoors();
+            }
+
             _kinematic.ResetVelocity();
             _kinematic.Actualize(_buffer, Time.fixedDeltaTime);
         }

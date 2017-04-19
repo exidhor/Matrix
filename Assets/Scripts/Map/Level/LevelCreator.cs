@@ -100,7 +100,7 @@ namespace Matrix
             }
 
             Debug.Log("Error in GetRandomFreeConnection, no free connection found");
-            return Direction.Bottom;
+            return Direction.Down;
         }
 
         private Room GetNewRoom(int index)

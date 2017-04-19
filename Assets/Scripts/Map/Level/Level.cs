@@ -10,8 +10,7 @@ namespace Matrix
     {
         private List<Room> _roomList = new List<Room>();
 
-        [SerializeField]
-        private int _currentRoomIndex;
+        [SerializeField] private int _currentRoomIndex;
 
         public void Construct(LevelEntry entry)
         {
@@ -24,7 +23,48 @@ namespace Matrix
 
             for (int i = 0; i < _roomList.Count; i++)
             {
-                RoomCreator.Instance.CreateRoom(_roomList[i]);
+                RoomCreator.Instance.CreateRoom(_roomList[i], PickPattern(entry));
+            }
+        }
+
+        private RoomPattern PickPattern(LevelEntry entry)
+        {
+            float totalWeight = 0;
+
+            for (int i = 0; i < entry.WeightedRoomPatterns.Count; i++)
+            {
+                totalWeight += entry.WeightedRoomPatterns[i].Weight;
+            }
+
+            float rate = RandomGenerator.Instance.NextFloat(totalWeight);
+
+            float currentRate = 0;
+
+            for (int i = 0; i < entry.WeightedRoomPatterns.Count; i++)
+            {
+                currentRate += entry.WeightedRoomPatterns[i].Weight;
+
+                if (currentRate > rate)
+                {
+                    return entry.WeightedRoomPatterns[i].RoomPattern;
+                }
+            }
+
+            // error
+            return entry.WeightedRoomPatterns[-1].RoomPattern;
+        }
+
+        public void EnterInto(int roomIndex, Direction enterDirection)
+        {
+            LoadRoom(roomIndex);
+
+            List<Door> doors = _roomList[_currentRoomIndex].GetDoors();
+
+            Direction targetDirection = RoomConnection.GetOppositeDirection(enterDirection);
+
+            for (int i = 0; i < doors.Count; i++)
+            {
+                
             }
         }
 
@@ -34,6 +74,11 @@ namespace Matrix
 
             _currentRoomIndex = indexToLoad;
             _roomList[_currentRoomIndex].Activate();
+        }
+
+        public void OpenDoors()
+        {
+            _roomList[_currentRoomIndex].OpenDoors();
         }
 
         public void ShowStartingRoom()
@@ -54,7 +99,7 @@ namespace Matrix
         {
             for (int i = 0; i < _roomList.Count; i++)
             {
-                _roomList[i].DestroyRoom();
+                //_roomList[i].DestroyRoom();
                 _roomList[i].Release();
             }
 

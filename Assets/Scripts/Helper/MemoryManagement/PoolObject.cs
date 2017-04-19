@@ -11,44 +11,21 @@ namespace Matrix
         public Pool Pool;
         public int IndexInPool;
 
-        //public GameObject GameObject;
-
-        //public bool IsFilled
-        //{
-        //    get { return GameObject != null; }
-        //}
-
-        public PoolObject()
+        void Awake()
         {
-            //GameObject = null;
-
             Pool = null;
             IndexInPool = -1;
         }
 
-        //public void Reset()
-        //{
-        //    if (IsFilled)
-        //    {
-        //        Release();
-        //    }
+        public virtual void OnPoolExit()
+        {
+            // nothing
+        }
 
-        //    Pool = null;
-        //    IndexInPool = -1;
-        //}
-
-        //public virtual void Instantiate()
-        //{
-        //    if (IsFilled)
-        //    {
-        //        Release();
-        //    }
-
-        //    if (Pool != null)
-        //    {
-        //        Pool.GetFreeResource(this);
-        //    }
-        //}
+        public virtual void OnPoolEnter()
+        {
+            // nothing
+        }
 
         public virtual void Release()
         {
@@ -56,8 +33,6 @@ namespace Matrix
             {
                  Pool.ReleaseResource(this);
             }
-
-            //GameObject = null;
         }
 
         public override string ToString()
