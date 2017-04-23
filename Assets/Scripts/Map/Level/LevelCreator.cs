@@ -65,7 +65,7 @@ namespace Matrix
             {
                 currentWeight += _weightedRoomList.GetWeight(i);
 
-                if (currentWeight <= weight)
+                if (currentWeight > weight)
                 {
                     return i;
                 }
@@ -92,7 +92,7 @@ namespace Matrix
                 {
                     if (freeIndex == randomDirectionIndex)
                     {
-                        return (Direction) freeIndex;
+                        return (Direction) i;
                     }
 
                     freeIndex++;

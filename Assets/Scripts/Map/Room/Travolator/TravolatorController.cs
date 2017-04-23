@@ -11,8 +11,10 @@ namespace Matrix
         private List<Transform> _path;
 
         private List<TravolatorSegment> _travolatorSegments;
+        private List<TravolatorObject> _travolatorObjects;
 
-        private Pool _travolatorPool;
+        private Pool _travolatorSegmentPool;
+        private List<Pool> _travolatorObjectPools;
 
         private Direction _direction;
 
@@ -25,11 +27,15 @@ namespace Matrix
         private float _pauseTime;
         private float _currentTime;
 
+        private float _objectRate;
+
         void Awake()
         {
             _path = new List<Transform>();
 
             _travolatorSegments = new List<TravolatorSegment>();
+
+            _travolatorObjects = new List<TravolatorObject>();
         }
 
         public override void OnPoolEnter()
@@ -40,6 +46,15 @@ namespace Matrix
             {
                 _travolatorSegments[i].Release();
             }
+
+            _travolatorSegments.Clear();
+
+            for (int i = 0; i < _travolatorObjects.Count; i++)
+            {
+                _travolatorObjects[i].Release();
+            }
+
+            _travolatorObjects.Clear();
         }
 
         public override void OnPoolExit()
@@ -51,13 +66,12 @@ namespace Matrix
             _path.Clear();
 
             transform.position = Vector3.zero;
-
-            _travolatorSegments.Clear();
         }
 
-        public void SetPool(Pool travolatorPool)
+        public void SetPools(Pool travolatorSegmentPool, List<Pool> travolatorObjectPools)
         {
-            _travolatorPool = travolatorPool;
+            _travolatorSegmentPool = travolatorSegmentPool;
+            _travolatorObjectPools = travolatorObjectPools;
         }
 
         public void Add(Transform pathNode)
@@ -80,6 +94,11 @@ namespace Matrix
             _speed = speed;
         }
 
+        public void SetObjectRate(float objectRate)
+        {
+            _objectRate = objectRate;
+        }
+
         private void ConstructTravolator()
         {
             _isPaused = true;
@@ -99,12 +118,14 @@ namespace Matrix
 
             for (int i = 0; i < _path.Count - 1; i++)
             {
-                TravolatorSegment effect = (TravolatorSegment) _travolatorPool.GetFreeResource();
-                effect.transform.parent = transform;
-                effect.transform.position = _path[i].position;
-                effect.transform.rotation = _path[lastIndex].rotation;
+                TravolatorSegment travolatorSegment = (TravolatorSegment) _travolatorSegmentPool.GetFreeResource();
+                travolatorSegment.transform.parent = transform;
+                travolatorSegment.transform.position = _path[i].position;
+                travolatorSegment.transform.rotation = _path[lastIndex].rotation;
 
-                _travolatorSegments.Add(effect);
+                RandomCarryingObject(travolatorSegment);
+
+                _travolatorSegments.Add(travolatorSegment);
             }
 
             _velocity = MathHelper.GetDirection(_path[0].position, _path[1].position);
@@ -114,7 +135,7 @@ namespace Matrix
             _isInitialized = true;
         }
 
-        private void StartMoving()
+        private void Move()
         {
             for (int i = 0; i < _travolatorSegments.Count; i++)
             {
@@ -131,40 +152,43 @@ namespace Matrix
                 if (_currentTime > _pauseTime)
                 {
                     _isPaused = false;
-                    StartMoving();
                 }
             }
             if(!_isPaused)
             {
+                Move();
+
                 Vector2 nextPosition = _travolatorSegments[0].transform.position + new Vector3(_velocity.x, _velocity.y) * deltaTime;
 
-                if (_direction == Direction.Left)
+                switch (_direction)
                 {
-                    if (nextPosition.x < _path[1].position.x)
-                    {
-                        PauseTravolator();
-                    }
-                }
-                else if (_direction == Direction.Up)
-                {
-                    if (nextPosition.y > _path[1].position.y)
-                    {
-                        PauseTravolator();
-                    }
-                }
-                else if (_direction == Direction.Right)
-                {
-                    if (nextPosition.x > _path[1].position.x)
-                    {
-                        PauseTravolator();
-                    }
-                }
-                else if (_direction == Direction.Down)
-                {
-                    if (nextPosition.y < _path[1].position.y)
-                    {
-                        PauseTravolator();
-                    }
+                    case Direction.Left:
+                        if (nextPosition.x < _path[1].position.x)
+                        {
+                            PauseTravolator();
+                        }
+                        break;
+
+                    case Direction.Up:
+                        if (nextPosition.y > _path[1].position.y)
+                        {
+                            PauseTravolator();
+                        }
+                        break;
+
+                    case Direction.Right:
+                        if (nextPosition.x > _path[1].position.x)
+                        {
+                            PauseTravolator();
+                        }
+                        break;
+
+                    case Direction.Down:
+                        if (nextPosition.y < _path[1].position.y)
+                        {
+                            PauseTravolator();
+                        }
+                        break;
                 }
             }
         }
@@ -191,6 +215,21 @@ namespace Matrix
             }
 
             _travolatorSegments[0] = tmp;
+
+            if (_travolatorSegments[0].TravolatorObject != null)
+            {
+                _travolatorSegments[0].TravolatorObject.Release();
+            }
+
+            //_travolatorSegments[0].SetTravolatorObject(GetRandomTravolatorObject());
+            RandomCarryingObject(_travolatorSegments[0]);
+        }
+
+        private TravolatorObject GetRandomTravolatorObject()
+        {
+            int random = RandomGenerator.Instance.NextInt(_travolatorObjectPools.Count);
+
+            return (TravolatorObject) _travolatorObjectPools[random].GetFreeResource();
         }
 
         void Update()
@@ -223,6 +262,16 @@ namespace Matrix
             for (int i = 0; i < _travolatorSegments.Count; i++)
             {
                 _travolatorSegments[i].gameObject.SetActive(true);
+            }
+        }
+
+        public void RandomCarryingObject(TravolatorSegment segment)
+        {
+            float rate = RandomGenerator.Instance.NextFloat(1f);
+
+            if (rate < _objectRate)
+            {
+                segment.SetTravolatorObject(GetRandomTravolatorObject());
             }
         }
     }

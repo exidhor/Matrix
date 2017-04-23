@@ -8,6 +8,7 @@ namespace Matrix
 {
     public class Effect : PoolObject
     {
+        public bool IsManaged;
         public float MaxLifeTime;
 
         public bool IsDead

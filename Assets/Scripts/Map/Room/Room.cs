@@ -22,6 +22,7 @@ namespace Matrix
         public GameObject WallContainer;
         public GameObject DoorContainer;
         public GameObject DynamicControllerContainer;
+        public GameObject EnnemyContainer;
 
         public int Length
         {
@@ -44,12 +45,15 @@ namespace Matrix
 
         private List<DynamicController> _dynamicObjectControllers;
 
+        private List<Ennemy> _ennemies;
+
         void Awake()
         {
             _roomConnectionList = new RoomConnectionList(this);
             _doors = new List<Door>();
 
             _dynamicObjectControllers = new List<DynamicController>();
+            _ennemies = new List<Ennemy>();
         }
 
         public override void OnPoolEnter()
@@ -65,6 +69,14 @@ namespace Matrix
 
             transform.position = position;
             Grid = new RoomGrid(length, width, position);
+        }
+
+        void Update()
+        {
+            if (_ennemies.Count == 0)
+            {
+                OpenDoors();
+            }
         }
 
         public void OpenDoors()
@@ -87,6 +99,13 @@ namespace Matrix
             }
 
             _dynamicObjectControllers.Clear();
+
+            for (int i = 0; i < _ennemies.Count; i++)
+            {
+                _ennemies[i].Release();
+            }
+
+            _ennemies.Clear();
         }
 
         public void Activate()
@@ -97,6 +116,12 @@ namespace Matrix
             {
                 _dynamicObjectControllers[i].Activate();
             }
+
+            for (int i = 0; i < _ennemies.Count; i++)
+            {
+                _ennemies[i].gameObject.SetActive(true);
+                EnnemyManager.Instance.RestoreEnnemy(_ennemies[i]);
+            }
         }
 
         public void Disable()
@@ -106,6 +131,11 @@ namespace Matrix
             for (int i = 0; i < _dynamicObjectControllers.Count; i++)
             {
                 _dynamicObjectControllers[i].Disable();
+            }
+
+            for (int i = 0; i < _ennemies.Count; i++)
+            {
+                _ennemies[i].gameObject.SetActive(false);
             }
         }
 
@@ -144,6 +174,21 @@ namespace Matrix
             controller.transform.parent = DynamicControllerContainer.transform;
 
             _dynamicObjectControllers.Add(controller);
+        }
+
+        public void AddEnnemy(Ennemy ennemy, Coord coord)
+        {
+            ennemy.transform.parent = EnnemyContainer.transform;
+            ennemy.SetRoomPlace(this);
+
+            Grid.SetCharacter(coord, ennemy);
+
+            _ennemies.Add(ennemy);
+        }
+
+        public void RemoveEnnemy(Ennemy ennemy)
+        {
+            _ennemies.Remove(ennemy);
         }
 
         public List<Door> GetDoors()

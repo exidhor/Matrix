@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Matrix
 {
     [RequireComponent(typeof(SteeringComponent), typeof(Selectable), typeof(Kinematic))]
-    public class LittleBoy : MonoBehaviour
+    public class LittleBoy : Character
     {
         public float MaxDistanceToThePlayer;
         public float RefreshTimeVision = 0.1f;

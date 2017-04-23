@@ -21,6 +21,16 @@ namespace Matrix
             CreatePools();
         }
 
+        public void Clear()
+        {
+            for (int i = 0; i < _effects.Count; i++)
+            {
+                _effects[i].Release();
+            }
+
+            _effects.Clear();
+        }
+
         private void CreateModelList()
         {
             _poolObjectList = new List<PoolObject>();
@@ -49,7 +59,8 @@ namespace Matrix
             Effect effect =
                 PoolTable.Instance.GetPool(GetModel(type).GetInstanceID()).GetFreeResource().GetComponent<Effect>();
 
-            _effects.Add(effect);
+            if(effect.IsManaged)
+                _effects.Add(effect);
 
             return effect;
         }

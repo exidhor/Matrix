@@ -4,14 +4,19 @@ using UnityEngine;
 
 namespace Matrix
 {
-    [RequireComponent(typeof(Kinematic), typeof(Collider2D))]
-    public class Player : MonoBehaviour
+    [RequireComponent(typeof(Kinematic), typeof(Collider2D), typeof(ManaComponent))]
+    public class Player : Character
     {
         [HideInInspector]
         public Collider2D Collider;
 
+        public float MaxRunSpeed;
+
+        public int DashManaCost;
+
         private Kinematic _kinematic;
         private AnimatorComponent _animatorComponent;
+        private ManaComponent _manaComponent;
 
         private bool _lastFrameWasRunning;
         private bool _lastFrameWasShielding;
@@ -19,11 +24,13 @@ namespace Matrix
         private SteeringOutput _buffer;
 
         private Shield _shield;
+        private Dash _dash;
 
         void Awake()
         {
             _kinematic = GetComponent<Kinematic>();
             _animatorComponent = GetComponent<AnimatorComponent>();
+            _manaComponent = GetComponent<ManaComponent>();
 
             _lastFrameWasRunning = false;
             _lastFrameWasShielding = false;
@@ -46,28 +53,34 @@ namespace Matrix
             }
         }
 
-        void Update()
+        void FixedUpdate()
         {
             if (TimeManager.Instance.IsPaused)
                 return;
 
             _buffer.Reset();
 
-            bool shieldIsActive = HandleShield();
+            bool dashIsActive = HandleDash();
 
-            if (shieldIsActive)
+            if (!dashIsActive)
             {
-                HandleOrientation();
-            }
-            else
-            {
-                HandleMovement();
-            }
+                bool shieldIsActive = HandleShield();
 
-            if (Input.GetButtonDown("OpenDoor"))
-            {
-                Level.Instance.OpenDoors();
+                if (shieldIsActive)
+                {
+                    HandleOrientation();
+                }
+                else
+                {
+                    HandleMovement();
+                }
+
+                if (Input.GetButtonDown("OpenDoor"))
+                {
+                    Level.Instance.OpenDoors();
+                }
             }
+           
 
             _kinematic.ResetVelocity();
             _kinematic.Actualize(_buffer, Time.fixedDeltaTime);
@@ -157,7 +170,44 @@ namespace Matrix
                 }
             }
 
-            _buffer.Linear = new Vector2(horizontal * 1000, vertical * 1000);
+            _buffer.Linear = new Vector2(horizontal, vertical);
+            _buffer.Linear.Normalize();
+            _buffer.Linear *= MaxRunSpeed;
+        }
+
+        private bool HandleDash()
+        {
+            if (_dash == null)
+            {
+                if (Input.GetButtonDown("Dash") && _manaComponent.HasEnoughMana(DashManaCost))
+                {
+                    _dash = (Dash)EffectManager.Instance.GetFreeEffect(EffectType.Dash);
+                    _dash.transform.position = transform.position;
+                    _dash.transform.rotation = transform.rotation;
+                    _dash.transform.parent = transform;
+
+                    _manaComponent.Use(DashManaCost);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if (_dash.IsDead)
+            {
+                _dash.Release();
+                _dash = null;
+
+                return false;
+            }
+
+            _lastFrameWasRunning = false;
+            _animatorComponent.SetCurrentAnimation("dash");
+            _buffer.IsOriented = true;
+            _buffer.Linear = Vector2.right * _dash.DashSpeed;
+
+            return true;
         }
     }
 }

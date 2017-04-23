@@ -10,25 +10,58 @@ namespace Matrix
     {
         public Vector2 PauseTimeRange;
         public Vector2 TravolatorSpeedRange;
+        public float ObjectRate;
 
         public PoolEntry TravolatorSegment;
         public PoolEntry TableEnd;
         public PoolEntry TableSegment;
+        public List<PoolEntry> TravolatorObjects;
 
         private Pool _travolatorPool;
         private Pool _tableEndPool;
         private Pool _tableSegmentPool;
+        private List<Pool> _travolatorObjectPools;
 
         public override void CreatePools()
         {
             _travolatorPool = PoolTable.Instance.AddPool(TravolatorSegment);
             _tableEndPool = PoolTable.Instance.AddPool(TableEnd);
             _tableSegmentPool = PoolTable.Instance.AddPool(TableSegment);
+
+            _travolatorObjectPools = new List<Pool>();
+
+            for (int i = 0; i < TravolatorObjects.Count; i++)
+            {
+                _travolatorObjectPools.Add(PoolTable.Instance.AddPool(TravolatorObjects[i]));
+            }
         }
 
         public override void Fill(Room room)
         {
-            Direction direction = (Direction) RandomGenerator.Instance.NextInt(5);
+            PlaceTravolator(room);
+
+            PlaceEnnemies(room);
+        }
+
+        private void PlaceEnnemies(Room room)
+        {
+            // place some guard at the corners
+            List<Coord> ennemyCoords = new List<Coord>();
+
+            ennemyCoords.Add(new Coord(1, 1));
+            ennemyCoords.Add(new Coord(room.Length - 2, 1));
+            ennemyCoords.Add(new Coord(room.Length - 2, room.Width - 2));
+            ennemyCoords.Add(new Coord(1, room.Width - 2));
+
+            for (int i = 0; i < ennemyCoords.Count; i++)
+            {
+                room.AddEnnemy(EnnemyManager.Instance.GetFreeEnnemy(EnnemyType.Guard), ennemyCoords[i]);
+            }
+        }
+
+        private void PlaceTravolator(Room room)
+        {
+            Direction direction = (Direction)RandomGenerator.Instance.NextInt(4);
 
             // do nothing if the room is too small
             if (room.Length < 5 || room.Width < 5)
@@ -125,10 +158,11 @@ namespace Matrix
 
         private void FinalizeTravolatorController(TravolatorController travolatorController, Room room, Direction direction)
         {
-            travolatorController.SetPool(_travolatorPool);
+            travolatorController.SetPools(_travolatorPool, _travolatorObjectPools);
             travolatorController.SetDirection(direction);
             travolatorController.SetPauseTime(RandomGenerator.Instance.NextFloat(PauseTimeRange.x, PauseTimeRange.y));
             travolatorController.SetSpeed(RandomGenerator.Instance.NextFloat(TravolatorSpeedRange.x, TravolatorSpeedRange.y));
+            travolatorController.SetObjectRate(ObjectRate);
             room.AddDynamicController(travolatorController);
         }
     }

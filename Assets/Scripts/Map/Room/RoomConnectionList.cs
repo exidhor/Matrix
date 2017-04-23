@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Matrix
 {
@@ -66,12 +67,39 @@ namespace Matrix
 
         public RoomConnection GetConnection(Direction direction)
         {
-            return _connectionList[GetIndex(direction)];
+            if (direction >= 0 && (int) direction < 4)
+            {
+                return _connectionList[GetIndex(direction)];
+            }
+
+            return null;
         }
 
         public Room GetConnectedRoom(Direction direction)
         {
-            return GetConnection(direction).GetOtherRoom(_parent);
+            RoomConnection roomConnection = GetConnection(direction);
+
+            if (roomConnection != null)
+            {
+                return roomConnection.GetOtherRoom(_parent);
+            }
+
+            return null;
+        }
+
+        public Direction GetDirection(RoomConnection roomConnection)
+        {
+            for (int i = 0; i < _connectionList.Count; i++)
+            {
+                if (_connectionList[i] == roomConnection)
+                {
+                    return (Direction) i;
+                }
+            }
+
+            Debug.LogError("RoomConnection not found");
+
+            return Direction.Left;
         }
 
         private int GetIndex(Direction direction)

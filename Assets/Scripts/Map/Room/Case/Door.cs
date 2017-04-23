@@ -11,15 +11,16 @@ namespace Matrix
         public Tunnel Tunnel;
         public Rigidbody2D MovableDoorRigidbody;
         public Transform EndPoint;
+        public Transform OutputPoint;
         public float OpenningSpeed;
 
         public bool IsOpen = false;
         public bool IsOpenning = false;
 
-        public Direction DirectionRelativeToRoom
-        {
-            get { return Tunnel.Direction; }
-        }
+        //public Direction DirectionRelativeToRoom
+        //{
+        //    get { return Tunnel.Direction; }
+        //}
 
         private float _currentTime;
 
@@ -48,20 +49,26 @@ namespace Matrix
             _openningDoorDirection = direction;
         }
 
-        public void SetDirectionRelativeToRoom(Direction direction)
+        public void SetRoomConnection(RoomConnection roomConnection)
         {
-            Tunnel.Direction = direction;
+            Tunnel.SetRoomConnection(roomConnection);
         }
 
-        public void SetConnectedRoomIndex(int connectedRoomIndex)
-        {
-            Tunnel.SetConnectedRoomIndex(connectedRoomIndex);
-        }
+        //public void SetDirectionRelativeToRoom(Direction direction)
+        //{
+        //    Tunnel.Direction = direction;
+        //}
+
+        //public void SetConnectedRoomIndex(int connectedRoomIndex)
+        //{
+        //    Tunnel.SetConnectedRoomIndex(connectedRoomIndex);
+        //}
 
         public void Open()
         {
             IsOpenning = true;
             TranslateDoor();
+            Tunnel.IsActivate = true;
         }
 
         void Update()
@@ -72,8 +79,6 @@ namespace Matrix
                 {
                     IsOpenning = false;
                     IsOpen = true;
-
-                    Tunnel.IsActivate = true;
 
                     MovableDoorRigidbody.velocity = Vector2.zero;
                 }

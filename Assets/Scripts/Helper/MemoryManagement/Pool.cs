@@ -137,7 +137,7 @@ namespace Matrix
                 Resources[index].IsUsed = false;
                 Resources[index].PoolObject.gameObject.SetActive(false);
                 Resources[index].PoolObject.transform.position = StoredPosition;
-                Resources[index].PoolObject.transform.parent = transform;
+                Resources[index].PoolObject.transform.SetParent(transform);
 
                 Resources[index].PoolObject.OnPoolEnter();
 
@@ -188,7 +188,7 @@ namespace Matrix
         private Resource CreateResource()
         {
             PoolObject newPoolObject = Instantiate<PoolObject>(_model);
-            newPoolObject.transform.parent = this.gameObject.transform;
+            newPoolObject.transform.SetParent(gameObject.transform);
             newPoolObject.name = _model.name + " " + Resources.Count;
 
             newPoolObject.Pool = this;

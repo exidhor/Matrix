@@ -251,10 +251,13 @@ namespace Matrix
             {
                 // Get the middle of the wall
                 Door door = PickFrom<Door>(0, widthMiddle, DoorModels);
-                door.SetConnectedRoomIndex(leftConnection.GetOtherRoom(room).RoomIndex);
+                //door.SetConnectedRoomIndex(leftConnection.GetOtherRoom(room).RoomIndex);
                 door.transform.eulerAngles = new Vector3(0, 0, 90);
                 door.SetOpeningDoorDirection(Direction.Down);
-                door.SetDirectionRelativeToRoom(Direction.Left);
+                //door.SetDirectionRelativeToRoom(Direction.Left);
+                door.SetRoomConnection(leftConnection);
+
+                leftConnection.SetDoor(door, room);
 
                 room.SetDoor(0, widthMiddle, door);
             }
@@ -265,10 +268,13 @@ namespace Matrix
             {
                 // Get the middle of the wall
                 Door door = PickFrom<Door>(lengthMiddle, room.Width - 1, DoorModels);
-                door.SetConnectedRoomIndex(topConnection.GetOtherRoom(room).RoomIndex);
+                //door.SetConnectedRoomIndex(topConnection.GetOtherRoom(room).RoomIndex);
                 door.transform.eulerAngles = new Vector3(0, 0, 0);
                 door.SetOpeningDoorDirection(Direction.Left);
-                door.SetDirectionRelativeToRoom(Direction.Up);
+                //door.SetDirectionRelativeToRoom(Direction.Up);
+                door.SetRoomConnection(topConnection);
+
+                topConnection.SetDoor(door, room);
 
                 room.SetDoor(lengthMiddle, room.Width-1, door);
             }
@@ -279,10 +285,13 @@ namespace Matrix
             {
                 // Get the middle of the wall
                 Door door = PickFrom<Door>(room.Length-1, widthMiddle, DoorModels);
-                door.SetConnectedRoomIndex(rightConnection.GetOtherRoom(room).RoomIndex);
+                //door.SetConnectedRoomIndex(rightConnection.GetOtherRoom(room).RoomIndex);
                 door.transform.eulerAngles = new Vector3(0, 0, -90);
                 door.SetOpeningDoorDirection(Direction.Up);
-                door.SetDirectionRelativeToRoom(Direction.Right);
+                //door.SetDirectionRelativeToRoom(Direction.Right);
+                door.SetRoomConnection(rightConnection);
+
+                rightConnection.SetDoor(door, room);
 
                 room.SetDoor(room.Length-1, widthMiddle, door);
             }
@@ -293,10 +302,13 @@ namespace Matrix
             {
                 // Get the middle of the wall
                 Door door = PickFrom<Door>(lengthMiddle, 0, DoorModels);
-                door.SetConnectedRoomIndex(bottomConnection.GetOtherRoom(room).RoomIndex);
+                //door.SetConnectedRoomIndex(bottomConnection.GetOtherRoom(room).RoomIndex);
                 door.transform.eulerAngles = new Vector3(0, 0, -180);
                 door.SetOpeningDoorDirection(Direction.Right);
-                door.SetDirectionRelativeToRoom(Direction.Down);
+                //door.SetDirectionRelativeToRoom(Direction.Down);
+                door.SetRoomConnection(bottomConnection);
+
+                bottomConnection.SetDoor(door, room);
 
                 room.SetDoor(lengthMiddle, 0, door);
             }

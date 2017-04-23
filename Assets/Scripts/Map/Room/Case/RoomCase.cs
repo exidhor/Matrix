@@ -20,6 +20,7 @@ namespace Matrix
 
         private GroundCase _ground;
         private ObstacleCase _obstacle;
+        private CharacterCase _character;
 
         private Vector2 _position;
         private Vector2 _size;
@@ -28,12 +29,14 @@ namespace Matrix
         {
             _ground = new GroundCase();
             _obstacle = new ObstacleCase();
+            _character = new CharacterCase();
         }
 
         public void Destroy()
         {
             _ground.Destroy();
             _obstacle.Destroy();
+            _character.Destroy();
         }
 
         public void SetPosition(Vector2 position)
@@ -42,6 +45,7 @@ namespace Matrix
 
             _ground.SetPosition(position);
             _obstacle.SetPosition(position);
+            _character.SetPosition(position);
         }
 
         public void SetSize(Vector2 size)
@@ -59,6 +63,12 @@ namespace Matrix
         {
             _obstacle.Set(obstacle);
             _obstacle.SetPosition(_position);
+        }
+
+        public void SetCharacter(Character character)
+        {
+            _character.Set(character);
+            _character.SetPosition(_position);
         }
 
         public void SetActive(bool state)

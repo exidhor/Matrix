@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Matrix
 {
-    public struct WeightedRoom
+    public class WeightedRoom
     {
         public Room Room;
         public float Weight;
@@ -14,6 +14,11 @@ namespace Matrix
         {
             Room = room;
             Weight = weight;
+        }
+
+        public override string ToString()
+        {
+            return "WeightedRoom (" + Room + ", " + Weight + ")";
         }
     }
 }

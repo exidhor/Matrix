@@ -31,6 +31,8 @@ namespace Matrix
 
         public void StartGame()
         {
+            RandomGenerator.Instance.Restart();
+
             if (_isPlaying)
             {
                 Level.Instance.Clear();

@@ -158,6 +158,16 @@ namespace Matrix
             }
         }
 
+        public void SetCharacter(Coord coord, Character character)
+        {
+            SetCharacter(coord.x, coord.y, character);
+        }
+
+        public void SetCharacter(int x, int y, Character character)
+        {
+            _roomGrid[x][y].SetCharacter(character);
+        }
+
         public void SetGround(Coord coord, Ground ground)
         {
             SetGround(coord.x, coord.y, ground);

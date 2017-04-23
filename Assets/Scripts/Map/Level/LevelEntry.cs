@@ -21,6 +21,7 @@ namespace Matrix
 
         public List<float> ConnectionRates;
 
+        public RoomPattern StartingPattern;
         public List<WeightedRoomPattern> WeightedRoomPatterns;
     }
 }

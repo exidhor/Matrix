@@ -11,7 +11,17 @@ namespace Matrix
         public int MaxLife;
         public int Life;
 
+        public bool IsAlive
+        {
+            get { return Life >= 0; }
+        }
+
         void Awake()
+        {
+            Init();
+        }
+
+        public void Init()
         {
             Life = MaxLife;
         }

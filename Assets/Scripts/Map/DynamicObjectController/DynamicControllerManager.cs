@@ -21,6 +21,16 @@ namespace Matrix
             _dynamicControllers = new List<DynamicController>();
         }
 
+        //public void Clear()
+        //{
+        //    for (int i = 0; i < _dynamicControllers.Count; i++)
+        //    {
+        //        _dynamicControllers[i].Release();
+        //    }
+
+        //    _dynamicControllers.Clear();
+        //}
+
         private void CreateModelList()
         {
             _poolObjectList = new List<PoolObject>();
@@ -48,8 +58,6 @@ namespace Matrix
         {
             DynamicController dynamicController =
                 PoolTable.Instance.GetPool(GetModel(type).GetInstanceID()).GetFreeResource().GetComponent<DynamicController>();
-
-            _dynamicControllers.Add(dynamicController);
 
             return dynamicController;
         }

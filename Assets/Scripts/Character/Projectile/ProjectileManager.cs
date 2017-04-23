@@ -22,6 +22,16 @@ namespace Matrix
             CreatePools();
         }
 
+        public void Clear()
+        {
+            for (int i = 0; i < _projectiles.Count; i++)
+            {
+                _projectiles[i].Release();
+            }
+
+            _projectiles.Clear();
+        }
+
         private void CreateModelList()
         {
             _poolObjectList = new List<PoolObject>();

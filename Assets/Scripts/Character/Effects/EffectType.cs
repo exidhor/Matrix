@@ -9,6 +9,7 @@ namespace Matrix
     {
         ShotImpact,
         Sleeve, 
-        Shield
+        Shield,
+        Dash
     }
 }

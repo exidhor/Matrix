@@ -15,6 +15,11 @@ namespace Matrix
 
         void Start()
         {
+            Restart();
+        }
+
+        public void Restart()
+        {
             if (UseRandomSeed)
             {
                 Seed = GenerateRandomSeed();

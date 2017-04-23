@@ -67,6 +67,8 @@ namespace Matrix
 
             float difference = newWeight - currentWeight;
 
+            _weightedRooms[index].Weight = newWeight;
+
             _globalWeight += difference;
         }
     }
