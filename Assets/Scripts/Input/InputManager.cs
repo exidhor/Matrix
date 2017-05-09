@@ -22,14 +22,24 @@ namespace Matrix
 
         void Update()
         {
+            HandleMenu();
+
+            HandleSelectables();
+        }
+
+        private void HandleMenu()
+        {
             if (Input.GetButtonDown("Cancel"))
             {
-                if(!MenuManager.Instance.IsActive)
+                if (!MenuManager.Instance.IsActive)
                     MenuManager.Instance.DisplayMenu();
                 else
                     MenuManager.Instance.Resume();
             }
+        }
 
+        private void HandleSelectables()
+        {
             for (int i = 0; i < Selectables.Count; i++)
             {
                 Selectables[i].Actualize();
@@ -62,7 +72,7 @@ namespace Matrix
             float smallestDistance = float.MaxValue;
             Selectable bestSelectable = null;
 
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePosition = UnityEngine.Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             for (int i = 0; i < Selectables.Count; i++)
             {

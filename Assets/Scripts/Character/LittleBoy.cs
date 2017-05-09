@@ -31,7 +31,12 @@ namespace Matrix
             FlyingMovement = new FlyingMovement(_steeringComponent, transform);
         }
 
-        void Update()
+        public override void OnDeath()
+        {
+            // todo
+        }
+
+        void FixedUpdate()
         {
             _steeringComponent.ClearBehaviors();
 
@@ -40,12 +45,12 @@ namespace Matrix
 
             if (!_kinematic.isMoving)
             {
-                VisionAI.TryToSeeSomething(Time.deltaTime);
+                VisionAI.TryToSeeSomething(TimeManager.Instance.fixedDeltaTime);
                 FaceSeenTarget();
             }
 
             _steeringComponent.ActualizeSteering();
-            _steeringComponent.ApplySteeringOnKinematic(Time.deltaTime);
+            _steeringComponent.ApplySteeringOnKinematic(TimeManager.Instance.fixedDeltaTime);
         }
 
         private void SetTargetMovement()

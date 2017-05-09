@@ -11,6 +11,7 @@ namespace Matrix
         public Vector2 PauseTimeRange;
         public Vector2 TravolatorSpeedRange;
         public float ObjectRate;
+        public int Spacing;
 
         public PoolEntry TravolatorSegment;
         public PoolEntry TableEnd;
@@ -21,6 +22,8 @@ namespace Matrix
         private Pool _tableEndPool;
         private Pool _tableSegmentPool;
         private List<Pool> _travolatorObjectPools;
+
+        private Direction _directionBuffer;
 
         public override void CreatePools()
         {
@@ -46,104 +49,159 @@ namespace Matrix
         private void PlaceEnnemies(Room room)
         {
             // place some guard at the corners
-            List<Coord> ennemyCoords = new List<Coord>();
+            List<Coord> guardCoords = new List<Coord>();
 
-            ennemyCoords.Add(new Coord(1, 1));
-            ennemyCoords.Add(new Coord(room.Length - 2, 1));
-            ennemyCoords.Add(new Coord(room.Length - 2, room.Width - 2));
-            ennemyCoords.Add(new Coord(1, room.Width - 2));
+            guardCoords.Add(new Coord(1, 1));
+            guardCoords.Add(new Coord(room.Length - 2, 1));
+            guardCoords.Add(new Coord(room.Length - 2, room.Width - 2));
+            guardCoords.Add(new Coord(1, room.Width - 2));
 
-            for (int i = 0; i < ennemyCoords.Count; i++)
+            for (int i = 0; i < guardCoords.Count; i++)
             {
-                room.AddEnnemy(EnnemyManager.Instance.GetFreeEnnemy(EnnemyType.Guard), ennemyCoords[i]);
+                room.AddEnnemy(EnnemyManager.Instance.GetFreeEnnemy(EnnemyType.Guard), guardCoords[i]);
             }
-        }
 
-        private void PlaceTravolator(Room room)
-        {
-            Direction direction = (Direction)RandomGenerator.Instance.NextInt(4);
+            List<Coord> workerCoords = new List<Coord>();
 
             // do nothing if the room is too small
             if (room.Length < 5 || room.Width < 5)
                 return;
 
-            if (direction == Direction.Left)
+            if (_directionBuffer == Direction.Left)
             {
-                for (int y = 2; y < room.Width - 2; y += 2)
+                for (int y = Spacing; y < room.Width - 2 - Spacing; y += 1 + Spacing)
+                {
+                    for (int x = room.Length - 3 - Spacing; x > 1 + Spacing; x--)
+                    {
+                        workerCoords.Add(new Coord(x, y));
+                    }
+                }
+            }
+
+            else if (_directionBuffer == Direction.Up)
+            {
+                for (int x = Spacing; x < room.Length - 2 - Spacing; x += 1 + Spacing)
+                {
+                    for (int y = 2 + Spacing; y < room.Width - 2 - Spacing; y++)
+                    {
+                        workerCoords.Add(new Coord(x, y));
+                    }
+                }
+            }
+
+            else if (_directionBuffer == Direction.Right)
+            {
+                for (int y = Spacing; y < room.Width - 2 - Spacing; y += 1 + Spacing)
+                {
+                    for (int x = 2 + Spacing; x < room.Length - 2 - Spacing; x++)
+                    {
+                        workerCoords.Add(new Coord(x, y));
+                    }
+                }
+            }
+
+            else if (_directionBuffer == Direction.Down)
+            {
+                for (int x = Spacing; x < room.Length - 2 - Spacing; x += 1 + Spacing)
+                {
+                    for (int y = room.Width - 3 - Spacing; y > 1 + Spacing; y--)
+                    {
+                        workerCoords.Add(new Coord(x, y));
+                    }
+                }
+            }
+
+            for (int i = 0; i < workerCoords.Count; i++)
+            {
+                room.AddEnnemy(EnnemyManager.Instance.GetFreeEnnemy(EnnemyType.Worker), workerCoords[i]);
+            }
+        }
+
+        private void PlaceTravolator(Room room)
+        {
+            _directionBuffer = (Direction)RandomGenerator.Instance.NextInt(4);
+
+            // do nothing if the room is too small
+            if (room.Length < 5 || room.Width < 5)
+                return;
+
+            if (_directionBuffer == Direction.Left)
+            {
+                for (int y = 1 + Spacing; y < room.Width - 1 - Spacing; y += 1 + Spacing)
                 {
                     TravolatorController travolatorController = (TravolatorController)
                         DynamicControllerManager.Instance.GetFreeDynamicController(DynamicControllerType.Travolator);
 
-                    SetTableObject(room.Length - 3, y, -90, travolatorController, _tableEndPool, room);
+                    SetTableObject(room.Length - 2 - Spacing, y, -90, travolatorController, _tableEndPool, room);
 
-                    for (int x = room.Length - 4; x > 2; x--)
+                    for (int x = room.Length - 3 - Spacing; x > 1 + Spacing; x--)
                     {
                         SetTableObject(x, y, 90, travolatorController, _tableSegmentPool, room);
                     }
 
-                    SetTableObject(2, y, 90, travolatorController, _tableEndPool, room);
+                    SetTableObject(1 + Spacing, y, 90, travolatorController, _tableEndPool, room);
 
-                    FinalizeTravolatorController(travolatorController, room, direction);
+                    FinalizeTravolatorController(travolatorController, room, _directionBuffer);
                 }
             }
 
-            else if (direction == Direction.Up)
+            else if (_directionBuffer == Direction.Up)
             {
-                for (int x = 2; x < room.Length - 2; x += 2)
+                for (int x = 1 + Spacing; x < room.Length - 1 - Spacing; x += 1 + Spacing)
                 {
                     TravolatorController travolatorController = (TravolatorController)
                        DynamicControllerManager.Instance.GetFreeDynamicController(DynamicControllerType.Travolator);
 
-                    SetTableObject(x, 2, -180, travolatorController, _tableEndPool, room);
+                    SetTableObject(x, 1 + Spacing, -180, travolatorController, _tableEndPool, room);
 
-                    for (int y = 3; y < room.Width - 3; y++)
+                    for (int y = 2 + Spacing; y < room.Width - 2 - Spacing; y++)
                     {
                         SetTableObject(x, y, 0, travolatorController, _tableSegmentPool, room);
                     }
 
-                    SetTableObject(x, room.Width - 3, 0, travolatorController, _tableEndPool, room);
+                    SetTableObject(x, room.Width - 2 - Spacing, 0, travolatorController, _tableEndPool, room);
 
-                    FinalizeTravolatorController(travolatorController, room, direction);
+                    FinalizeTravolatorController(travolatorController, room, _directionBuffer);
                 }
             }
 
-            else if (direction == Direction.Right)
+            else if (_directionBuffer == Direction.Right)
             {
-                for (int y = 2; y < room.Width - 2; y += 2)
+                for (int y = 1 + Spacing; y < room.Width - 1 - Spacing; y += 1 + Spacing)
                 {
                     TravolatorController travolatorController = (TravolatorController)
                        DynamicControllerManager.Instance.GetFreeDynamicController(DynamicControllerType.Travolator);
 
-                    SetTableObject(2, y, 90, travolatorController, _tableEndPool, room);
+                    SetTableObject(1 + Spacing, y, 90, travolatorController, _tableEndPool, room);
 
-                    for (int x = 3; x < room.Length - 3; x++)
+                    for (int x = 2 + Spacing; x < room.Length - 2 - Spacing; x++)
                     {
                         SetTableObject(x, y, -90, travolatorController, _tableSegmentPool, room);
                     }
 
-                    SetTableObject(room.Length - 3, y, -90, travolatorController, _tableEndPool, room);
+                    SetTableObject(room.Length - 2 - Spacing, y, -90, travolatorController, _tableEndPool, room);
 
-                    FinalizeTravolatorController(travolatorController, room, direction);
+                    FinalizeTravolatorController(travolatorController, room, _directionBuffer);
                 }
             }
 
-            else if (direction == Direction.Down)
+            else if (_directionBuffer == Direction.Down)
             {
-                for (int x = 2; x < room.Length - 2; x += 2)
+                for (int x = 1 + Spacing; x < room.Length - 1 - Spacing; x += 1 + Spacing)
                 {
                     TravolatorController travolatorController = (TravolatorController)
                        DynamicControllerManager.Instance.GetFreeDynamicController(DynamicControllerType.Travolator);
 
-                    SetTableObject(x, room.Width - 3, 0, travolatorController, _tableEndPool, room);
+                    SetTableObject(x, room.Width - 2 - Spacing, 0, travolatorController, _tableEndPool, room);
 
-                    for (int y = room.Width - 4; y > 2; y--)
+                    for (int y = room.Width - 3 - Spacing; y > 1 + Spacing; y--)
                     {
                         SetTableObject(x, y, -180, travolatorController, _tableSegmentPool, room);
                     }
 
-                    SetTableObject(x, 2, -180, travolatorController, _tableEndPool, room);
+                    SetTableObject(x, 1 + Spacing, -180, travolatorController, _tableEndPool, room);
 
-                    FinalizeTravolatorController(travolatorController, room, direction);
+                    FinalizeTravolatorController(travolatorController, room, _directionBuffer);
                 }
             }
         }

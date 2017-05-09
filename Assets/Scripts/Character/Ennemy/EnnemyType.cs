@@ -7,6 +7,7 @@ namespace Matrix
 {
     public enum EnnemyType
     {
-        Guard
+        Guard,
+        Worker
     }
 }

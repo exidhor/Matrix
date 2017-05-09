@@ -25,6 +25,11 @@ namespace Matrix
             }
         }
 
+        public float DiagonalCase
+        {
+            get { return _diagonalCase; }
+        }
+
         private Vector2 _roomPosition;
         private Vector2 _roomSize;
 
@@ -33,6 +38,8 @@ namespace Matrix
         private NodeGrid _nodeGrid;
 
         private RoomCase[][] _roomGrid;
+
+        private float _diagonalCase;
 
         public RoomGrid(int length, int width, Vector2 roomPosition)
         {
@@ -53,10 +60,15 @@ namespace Matrix
                 
         }
 
+        public bool PointIsInGrid(Vector2 point)
+        {
+            return !(point.x < _roomPosition.x - _caseSize.x/2 || point.x > _roomPosition.x + _roomSize.x - _caseSize.x/2
+                   || point.y < _roomPosition.y - _caseSize.y/2 || point.y > _roomPosition.y + _roomSize.y - _caseSize.y/2);
+        }
+
         public Node GetNodeAt(Vector2 position)
         {
-            if (position.x < _roomPosition.x - _caseSize.x/2 || position.x > _roomPosition.x + _roomSize.x - _caseSize.x/2
-                || position.y < _roomPosition.y - _caseSize.y/2 || position.y > _roomPosition.y + _roomSize.y - _caseSize.y/2)
+            if (!PointIsInGrid(position))
             {
                 return null;
             }
@@ -68,6 +80,45 @@ namespace Matrix
             //Debug.Log("(position.y - _roomPosition.y)/_caseSize.y = " + "( " + position.y + " - " + _roomPosition.y + " ) " + " / " + _caseSize.y + ") => " + y);
 
             return _nodeGrid.Get(x, y);
+        }
+
+        public Node GetClosestNodeAt(Vector2 targetPosition, Vector2 from)
+        {
+            if (!PointIsInGrid(targetPosition))
+            {
+                targetPosition = MathHelper.ClosestPointToRect(new Rect(_roomPosition + new Vector2(DiagonalCase, DiagonalCase), 
+                    _roomSize - new Vector2(DiagonalCase*2, DiagonalCase*2)), targetPosition);
+            }
+
+            Node targetNode = GetNodeAt(targetPosition);
+
+            if (!targetNode.IsBlocking)
+            {
+                return targetNode;
+            }
+
+            Vector2 direction = from - targetPosition;
+            direction.Normalize();
+            direction *= DiagonalCase;
+
+            while (true)
+            {
+                Vector2 nodePosition = GetPositionAt(targetNode.Coord);
+
+                targetPosition = nodePosition + direction;
+
+                targetNode = GetNodeAt(targetPosition);
+
+                if (targetNode == null)
+                {
+                    return null;
+                }
+
+                if (!targetNode.IsBlocking)
+                {
+                    return targetNode;
+                }
+            }
         }
 
         public void ComputeNodeConnections()
@@ -92,6 +143,8 @@ namespace Matrix
 
             _caseSize.x = lengthCase;
             _caseSize.y = widthCase;
+
+            _diagonalCase = Mathf.Sqrt(lengthCase*lengthCase + widthCase*widthCase);
 
             for (int i = 0; i < _roomGrid.Length; i++)
             {

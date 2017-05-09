@@ -45,7 +45,7 @@ namespace Matrix
 
         private List<DynamicController> _dynamicObjectControllers;
 
-        private List<Ennemy> _ennemies;
+        private List<Character> _ennemies;
 
         void Awake()
         {
@@ -53,7 +53,7 @@ namespace Matrix
             _doors = new List<Door>();
 
             _dynamicObjectControllers = new List<DynamicController>();
-            _ennemies = new List<Ennemy>();
+            _ennemies = new List<Character>();
         }
 
         public override void OnPoolEnter()
@@ -176,19 +176,19 @@ namespace Matrix
             _dynamicObjectControllers.Add(controller);
         }
 
-        public void AddEnnemy(Ennemy ennemy, Coord coord)
+        public void AddEnnemy(Character character, Coord coord)
         {
-            ennemy.transform.parent = EnnemyContainer.transform;
-            ennemy.SetRoomPlace(this);
+            character.transform.parent = EnnemyContainer.transform;
+            character.SetRoomPlace(this);
 
-            Grid.SetCharacter(coord, ennemy);
+            Grid.SetCharacter(coord, character);
 
-            _ennemies.Add(ennemy);
+            _ennemies.Add(character);
         }
 
-        public void RemoveEnnemy(Ennemy ennemy)
+        public void RemoveEnnemy(Character character)
         {
-            _ennemies.Remove(ennemy);
+            _ennemies.Remove(character);
         }
 
         public List<Door> GetDoors()

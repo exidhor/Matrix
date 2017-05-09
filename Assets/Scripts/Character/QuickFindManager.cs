@@ -10,7 +10,8 @@ namespace Matrix
     {
         private Player _player;
         private LittleBoy _littleBoy;
-        private List<Ennemy> _ennemies = new List<Ennemy>();
+        private Roko _roko;
+        private List<Guard> _ennemies = new List<Guard>();
 
         public bool PlayerIsThere
         {
@@ -22,12 +23,17 @@ namespace Matrix
             get { return _littleBoy != null; }
         }
 
+        public bool RokoIsThere
+        {
+            get { return _roko != null; }
+        }
+
         public Player GetPlayer()
         {
             return _player;
         }
 
-        public List<Ennemy> GetEnnemies()
+        public List<Guard> GetEnnemies()
         {
             return _ennemies;
         }
@@ -35,6 +41,11 @@ namespace Matrix
         public LittleBoy GetLittleBoy()
         {
             return _littleBoy;
+        }
+
+        public Roko GetRoko()
+        {
+            return _roko;
         }
 
         public void Register(LittleBoy littleBoy)
@@ -57,22 +68,32 @@ namespace Matrix
             _player = null;
         }
 
-        public void Register(Ennemy ennemy)
+        public void Register(Roko roko)
+        {
+            _roko = roko;
+        }
+
+        public void Unregister(Roko roko)
+        {
+            _roko = null;
+        }
+
+        public void Register(Guard guard)
         {
             for (int i = 0; i < _ennemies.Count; i++)
             {
-                if (_ennemies[i] == ennemy)
+                if (_ennemies[i] == guard)
                 {
                     return;
                 }
             }
 
-            _ennemies.Add(ennemy);
+            _ennemies.Add(guard);
         }
 
-        public void Unregister(Ennemy ennemy)
+        public void Unregister(Guard guard)
         {
-            _ennemies.Remove(ennemy);
+            _ennemies.Remove(guard);
         }
     }
 }

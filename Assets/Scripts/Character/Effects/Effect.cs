@@ -16,7 +16,7 @@ namespace Matrix
             get { return _isDead; }
         }
 
-        private bool _isDead;
+        protected bool _isDead;
 
         protected float _currentLifeTime;
 
@@ -30,7 +30,7 @@ namespace Matrix
 
         protected virtual void Update()
         {
-            _currentLifeTime += Time.deltaTime;
+            _currentLifeTime += TimeManager.Instance.deltaTime;
 
             if (_currentLifeTime > MaxLifeTime)
             {

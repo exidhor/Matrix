@@ -10,11 +10,11 @@ namespace Matrix
     {
         public float Speed;
 
-        void Update()
+        void FixedUpdate()
         {
             Vector3 eulerAngles = transform.eulerAngles;
 
-            eulerAngles.z += Time.deltaTime*Speed;
+            eulerAngles.z += TimeManager.Instance.fixedDeltaTime * Speed;
 
             transform.eulerAngles = eulerAngles;
         }

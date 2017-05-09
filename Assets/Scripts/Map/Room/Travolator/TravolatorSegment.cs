@@ -23,9 +23,12 @@ namespace Matrix
         {
             TravolatorObject = travolatorObject;
 
-            TravolatorObject.transform.parent = transform;
-            TravolatorObject.transform.position = transform.position;
-            TravolatorObject.transform.rotation = transform.rotation;
+            if (travolatorObject != null)
+            {
+                TravolatorObject.transform.parent = transform;
+                TravolatorObject.transform.position = transform.position;
+                TravolatorObject.transform.rotation = transform.rotation;
+            }
         }
 
         public override void OnPoolEnter()

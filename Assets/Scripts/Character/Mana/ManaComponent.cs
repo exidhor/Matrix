@@ -27,6 +27,15 @@ namespace Matrix
             return Mana >= manaNeeded;
         }
 
+        public void Add(int amount)
+        {
+            Mana += amount;
+
+            if (Mana > MaxMana)
+                Mana = MaxMana;
+        }
+
+
         public void Use(int amount)
         {
             Mana -= amount;
@@ -37,7 +46,7 @@ namespace Matrix
 
         void Update()
         {
-            Mana += ManaRegeration * Time.deltaTime;
+            Mana += ManaRegeration * TimeManager.Instance.deltaTime;
 
             if (Mana > MaxMana)
                 Mana = MaxMana;

@@ -8,6 +8,8 @@ namespace Matrix
 {
     public class TimeManager : MonoSingleton<TimeManager>
     {
+        public float MenuTimeScale = 1f;
+
         public float deltaTime
         {
             get { return Time.deltaTime; }
@@ -18,14 +20,19 @@ namespace Matrix
             get { return Time.fixedDeltaTime; }
         }
 
+        public float menuDeltaTime
+        {
+            get { return Time.unscaledDeltaTime*MenuTimeScale; }
+        }
+
         public bool IsPaused
         {
-            get { return Time.timeScale == 0; }
+            get { return Time.timeScale == 0f; }
         }
 
         public void Pause()
         {
-            Time.timeScale = 0;
+            Time.timeScale = 0f;
         }
 
         public void Resume()

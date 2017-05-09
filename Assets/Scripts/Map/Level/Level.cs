@@ -232,10 +232,20 @@ namespace Matrix
             return _activeRoom.Grid.GetNodeAt(position);
         }
 
+        public Vector2 GetClosestPositionNodeAt(Vector2 position)
+        {
+            return _activeRoom.Grid.GetPositionAt(GetNodeAt(position).Coord);
+        }
+
         public Vector2 GetPositionAt(Coord coord)
         {
             //return _roomList[_currentRoomIndex].Grid.GetPositionAt(coord);
             return _activeRoom.Grid.GetPositionAt(coord);
+        }
+
+        public Node GetClosestNodeAt(Vector2 targetPosition, Vector2 from)
+        {
+            return _activeRoom.Grid.GetClosestNodeAt(targetPosition, from);
         }
     }
 }

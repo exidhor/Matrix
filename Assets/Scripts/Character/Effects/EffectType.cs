@@ -10,6 +10,7 @@ namespace Matrix
         ShotImpact,
         Sleeve, 
         Shield,
-        Dash
+        Dash,
+        ManaBubble
     }
 }

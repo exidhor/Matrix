@@ -1,0 +1,5 @@
+#Roko
+	>Start
+		Bonjour Monsieur ! Vous voici dans un formidable jeu.
+		Vous allez voir, vous allez bien vous amuser !
+		Hahahaha ...

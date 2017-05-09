@@ -84,6 +84,7 @@ namespace Matrix
         public void ResetVelocity()
         {
             _rigidBody.velocity = Vector2.zero;
+            _rigidBody.angularVelocity = 0f;
         }
 
         private void ActualizeOrientation()

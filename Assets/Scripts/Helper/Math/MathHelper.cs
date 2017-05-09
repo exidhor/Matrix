@@ -121,5 +121,30 @@ namespace Matrix
         {
             return Pow(2, power);
         }
+
+        // http://stackoverflow.com/questions/20453545/how-to-find-the-nearest-point-in-the-perimeter-of-a-rectangle-to-a-given-point
+        public static Vector2 ClosestPointToRect(Rect rect, Vector2 outsidePoint)
+        {
+            outsidePoint.x = Mathf.Clamp(outsidePoint.x, rect.left, rect.right);
+            outsidePoint.y = Mathf.Clamp(outsidePoint.y, rect.top, rect.bottom);
+
+            float deltaLeft = Mathf.Abs(outsidePoint.x - rect.left);
+            float deltaRight = Mathf.Abs(outsidePoint.x - rect.right);
+            float deltaTop = Mathf.Abs(outsidePoint.y - rect.top);
+            float deltaBottom = Mathf.Abs(outsidePoint.y - rect.bottom);
+
+            float min = Mathf.Min(deltaLeft, deltaRight, deltaTop, deltaBottom);
+
+            if(min == deltaTop)
+                return new Vector2(outsidePoint.x, rect.top);
+            
+            if(min == deltaBottom)
+                return new Vector2(outsidePoint.x, rect.bottom);
+
+            if(min == deltaLeft)
+                return new Vector2(rect.left, outsidePoint.y);
+
+            return new Vector2(rect.right, outsidePoint.y);
+        }
     }
 }

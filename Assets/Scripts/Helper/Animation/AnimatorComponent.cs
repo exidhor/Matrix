@@ -71,7 +71,7 @@ namespace Matrix
 
         void LateUpdate()
         {
-            Animations[CurrentIndex].Actualize(Time.deltaTime, _spriteRenderer, transform);
+            Animations[CurrentIndex].Actualize(TimeManager.Instance.deltaTime, _spriteRenderer, transform);
         }
 
         public void SetCurrentAnimation(string animationTag, int number = 0, EOrientation orientation = 0)

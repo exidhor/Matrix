@@ -45,7 +45,7 @@ namespace Matrix
 
         private void Reloading()
         {
-            _currentReloadingTime += Time.deltaTime;
+            _currentReloadingTime += TimeManager.Instance.deltaTime;
 
             if (_currentReloadingTime > ReloadingTime)
             {

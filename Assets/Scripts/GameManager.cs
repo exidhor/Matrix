@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Matrix
 {
@@ -11,6 +12,14 @@ namespace Matrix
 
         private bool _isPlaying = false;
 
+        public GameObject BlackScreen;
+        public GameObject InGameUI;
+
+        public bool GameIsStarted;
+
+        public float StartPause;
+        private float _currentTime;
+
         void Awake()
         {
             CreatePools();
@@ -18,7 +27,42 @@ namespace Matrix
 
         void Start()
         {
+            TimeManager.Instance.Pause();
+
             StartGame();
+
+            Roko roko = QuickFindManager.Instance.GetRoko();
+            roko.TalksComponent.StartTalks("Start", false);
+            InGameUI.SetActive(false);
+        }
+
+        void Update()
+        {
+            if (!GameIsStarted)
+            {
+                _currentTime += TimeManager.Instance.menuDeltaTime;
+
+                if (_currentTime > StartPause)
+                {
+                    GameIsStarted = true;
+
+                    Roko roko = QuickFindManager.Instance.GetRoko();
+                    roko.StartAppearing();
+                }
+            }
+
+            if (GameIsStarted)
+            {
+                Roko roko = QuickFindManager.Instance.GetRoko();
+
+                if (!roko.TalksComponent.IsTalking)
+                {
+                    roko.HideSprite();
+                    BlackScreen.gameObject.SetActive(false);
+                    InGameUI.SetActive(true);
+                    TimeManager.Instance.Resume();
+                }
+            }
         }
 
         private void CreatePools()

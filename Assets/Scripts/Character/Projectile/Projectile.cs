@@ -41,7 +41,7 @@ namespace Matrix
 
         void Update()
         {
-            _currentLifeTime += Time.deltaTime;
+            _currentLifeTime += TimeManager.Instance.deltaTime;
 
             if (_currentLifeTime > MaxLifeTime)
             {

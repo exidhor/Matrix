@@ -11,11 +11,11 @@ namespace Matrix
 
         private List<Pool> _poolList;
 
-        private List<Ennemy> _ennemies;
+        private List<Character> _ennemies;
 
         void Start()
         {
-            _ennemies = new List<Ennemy>();
+            _ennemies = new List<Character>();
 
             CreatePools();
         }
@@ -40,14 +40,14 @@ namespace Matrix
             }
         }
 
-        public Ennemy GetFreeEnnemy(EnnemyType type)
+        public Character GetFreeEnnemy(EnnemyType type)
         {
-            Ennemy ennemy = (Ennemy)_poolList[(int) type].GetFreeResource();
-            ennemy.gameObject.SetActive(false);
+            Character character = (Character)_poolList[(int) type].GetFreeResource();
+            character.gameObject.SetActive(false);
 
-            _ennemies.Add(ennemy);
+            _ennemies.Add(character);
 
-            return  ennemy;
+            return  character;
         }
 
         void Update()
@@ -56,6 +56,8 @@ namespace Matrix
             {
                 if (!_ennemies[i].IsAlive)
                 {
+                    _ennemies[i].OnDeath();
+                    //_ennemies[i].ManaExpeller.Expeller();
                     _ennemies[i].Release();
                     _ennemies.RemoveAt(i);
                     i--;
@@ -63,7 +65,7 @@ namespace Matrix
             }
         }
 
-        public void RestoreEnnemy(Ennemy ennemy)
+        public void RestoreEnnemy(Character ennemy)
         {
             _ennemies.Add(ennemy);
         }

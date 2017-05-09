@@ -241,7 +241,7 @@ namespace Matrix
                     ConstructTravolator();
                 }
 
-                HandleMovement(Time.deltaTime);
+                HandleMovement(TimeManager.Instance.deltaTime);
             }
         }
 
@@ -272,6 +272,10 @@ namespace Matrix
             if (rate < _objectRate)
             {
                 segment.SetTravolatorObject(GetRandomTravolatorObject());
+            }
+            else
+            {
+                segment.SetTravolatorObject(null);   
             }
         }
     }
